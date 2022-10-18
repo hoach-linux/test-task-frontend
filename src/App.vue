@@ -1,123 +1,64 @@
 <template>
   <div class="app">
     <div class="left-top-block top-block">
-      <div class="products" v-for="items in onClickProductArr" :key="items.id">
-        <p>{{ items }}</p>
-      </div>
+      <products-user-chose
+        v-for="items in onClickProductArr"
+        :key="items.id"
+        :items="items"
+      />
     </div>
     <div class="right-top-block top-block">{{ onClickProduct }}</div>
     <div class="left-bottom-block bottom-block">
-      <div
-        class="products"
+      <products
         v-for="product in products"
         :key="product.id"
         @click="pushProductToArr"
-      >
-        <p>{{ product.name }}</p>
-      </div>
+        :product="product"
+      />
     </div>
     <div class="right-bottom-block bottom-block">
-      <div
-        class="products"
+      <products
         v-for="product2 in products2"
         :key="product2.id"
         @click="pushProduct"
-      >
-        <p>{{ product2.name }}</p>
-      </div>
+        :product="product2"
+      />
     </div>
   </div>
 </template>
 
 <script>
+import products from "@/components/products.vue";
+import productsUserChose from "@/components/productsUserChose.vue";
+import { mapState } from "vuex";
+import { ref } from '@vue/reactivity';
+import pushProductArr from '@/hooks/pushProductArr'
+
 export default {
+  components: {
+    products,
+    productsUserChose,
+  },
+  setup(props) {
+    const {onClickProductArr, pushProductToArr} = pushProductArr(6)
+    const onClickProduct = ref("")
+
+    return {
+      onClickProductArr,
+      pushProductToArr,
+      onClickProduct
+    }
+  },
   methods: {
-    pushProductToArr(e) {
-      if (this.onClickProductArr.length < this.maxItems) {
-        this.onClickProductArr = [
-          ...this.onClickProductArr,
-          e.target.textContent,
-        ];
-      }
-    },
     pushProduct(e) {
       this.onClickProduct = e.target.textContent;
     },
   },
-  data() {
-    return {
-      maxItems: 6,
-      onClickProductArr: "",
-      onClickProduct: "",
-      products: [
-        {
-          id: 1,
-          name: "Shoes 1",
-        },
-        {
-          id: 2,
-          name: "Shoes 2",
-        },
-        {
-          id: 3,
-          name: "Shoes 3",
-        },
-        {
-          id: 4,
-          name: "Shoes 4",
-        },
-        {
-          id: 5,
-          name: "T-shirt 1",
-        },
-        {
-          id: 6,
-          name: "T-shirt 2",
-        },
-        {
-          id: 7,
-          name: "T-shirt 3",
-        },
-        {
-          id: 8,
-          name: "T-shirt 4",
-        },
-      ],
-      products2: [
-        {
-          id: 11,
-          name: "Jacket 1",
-        },
-        {
-          id: 12,
-          name: "Jacket 2",
-        },
-        {
-          id: 13,
-          name: "Jacket 3",
-        },
-        {
-          id: 14,
-          name: "Jacket 4",
-        },
-        {
-          id: 15,
-          name: "Hoodie 1",
-        },
-        {
-          id: 16,
-          name: "Hoodie 2",
-        },
-        {
-          id: 17,
-          name: "Hoodie 3",
-        },
-        {
-          id: 18,
-          name: "Hoodie 4",
-        },
-      ],
-    };
+  computed: {
+    ...mapState({
+      products: (state) => state.product.products,
+      products2: (state) => state.product.products2,
+    }),
   },
 };
 </script>
@@ -146,12 +87,5 @@ body {
   min-width: 45vw;
   min-height: 45vh;
   border: 2px solid black;
-}
-.products {
-  margin: 10px 0 0 10px;
-  max-width: 60px;
-  max-height: 60px;
-  border: 2px solid black;
-  cursor: pointer;
 }
 </style>
